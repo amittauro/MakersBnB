@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+
+    <form action="/sessions" method="post">
+      <input type="hidden" name="_method" value="delete">
+      <input type="submit" value="log out">
+    </form>
+
+    <h1>Requests you've made:</h1>
+    <ul>
+      <% @reservations_made.each do |reservation| %>
+      <li><%=reservation.space.name%></li>
+      <%=reservation.space.description%>
+      <%=reservation.parsed_date%>
+      <% end %>
+    </ul>
+
+    <h1>Requests you've received:</h1>
+    <ul>
+      <%@reservations_received.each do |reservation|%>
+      <div class="request">
+      <form action="/requests/<%=reservation.id%>" method="post">
+      <input type="submit" value="approve">
+      <li><%=reservation.space.name%></li>
+      <%=reservation.space.description%>
+      <%=reservation.parsed_date%>
+      </form>
+      </div>
+      <div class="deny_request">
+      <form action="/deny_requests/<%=reservation.id%>" method="post">
+      <input type="submit" value="deny">
+      </form>
+      </div>
+      <% end %>
+    </ul>
+  </body>
+</html>

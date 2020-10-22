@@ -1,0 +1,25 @@
+
+
+<a href="/spaces/new">List a space</a>
+
+<a href="/requests">Requests</a>
+
+<form action="/sessions" method="post">
+  <input type="hidden" name="_method" value="delete">
+  <input type="submit" value="log out">
+</form>
+
+<h1>Spaces</h1>
+
+<ul>
+  <% @spaces.each do |space| %>
+  <div class="space">
+  <form action="/spaces/<%=space.id%> method="get">
+    <input type="submit" value="book">
+    <li>Name: <%= space.name %> </li>
+    Description: <%= space.description %><br>
+    Price per night (£): <%= space.price %><br>
+  </form>
+  <% end %>
+  </div>
+</ul>

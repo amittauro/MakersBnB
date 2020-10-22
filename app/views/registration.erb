@@ -1,0 +1,12 @@
+<%= flash[:passwords_not_matching] %>
+<form action="/registration" method="post">
+  <label for="email">Email: </label><br>
+  <input type="email" name="email"><br>
+  <label for="password">Password: </label><br>
+  <input type="text" name="password"><br>
+  <label for="re_enter_password">Re-enter password: </label><br>
+  <input type="text" name="password_confirmation">
+  <input type="submit" value="submit">
+</form>
+
+<a href="/sessions/new">Log in</a>
