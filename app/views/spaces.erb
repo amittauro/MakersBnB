@@ -14,12 +14,13 @@
 <ul>
   <% @spaces.each do |space| %>
   <div class="space">
-  <form action="/spaces/<%=space.id%> method="get">
+  <form action="/spaces/<%=space.id%>" method="post">
     <input type="submit" value="book">
     <li>Name: <%= space.name %> </li>
     Description: <%= space.description %><br>
     Price per night (£): <%= space.price %><br>
   </form>
-  <% end %>
   </div>
+  <% end %>
+
 </ul>

@@ -6,6 +6,8 @@
   </head>
   <body>
 
+    <a href="/spaces">View Spaces</a>
+
     <form action="/sessions" method="post">
       <input type="hidden" name="_method" value="delete">
       <input type="submit" value="log out">
@@ -13,26 +15,26 @@
 
     <h1>Requests you've made:</h1>
     <ul>
-      <% @reservations_made.each do |reservation| %>
-      <li><%=reservation.space.name%></li>
-      <%=reservation.space.description%>
-      <%=reservation.parsed_date%>
+      <% @requests_made.each do |request| %>
+      <li><%=request.space.name%></li>
+      <%=request.space.description%>
+      <%=request.reservation.parsed_date%>
       <% end %>
     </ul>
 
     <h1>Requests you've received:</h1>
     <ul>
-      <%@reservations_received.each do |reservation|%>
+      <%@requests_received.each do |request|%>
       <div class="request">
-      <form action="/requests/<%=reservation.id%>" method="post">
+      <form action="/approve/<%=request.id%>" method="post">
       <input type="submit" value="approve">
-      <li><%=reservation.space.name%></li>
-      <%=reservation.space.description%>
-      <%=reservation.parsed_date%>
+      <li><%=request.space.name%></li>
+      <%=request.space.description%>
+      <%=request.reservation.parsed_date%>
       </form>
       </div>
       <div class="deny_request">
-      <form action="/deny_requests/<%=reservation.id%>" method="post">
+      <form action="/deny/<%=request.id%>" method="post">
       <input type="submit" value="deny">
       </form>
       </div>

@@ -2,7 +2,7 @@
 <ul>
    <% @reservations.each do |reservation| %>
     <div class="date">
-     <form action="/reservations/<%=reservation.id%>" method="post">
+     <form action="/requests/<%=reservation.id%>" method="post">
        <li> <%= reservation.parsed_date %> </li>
        <input type="submit" value="book">
      </form>

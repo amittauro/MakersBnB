@@ -3,6 +3,7 @@ require 'sinatra/activerecord'
 require_relative 'models/user'
 require_relative 'models/space'
 require_relative 'models/reservation'
+require_relative 'models/request'
 require 'pry'
 require 'sinatra/flash'
 require 'date'
@@ -61,53 +62,48 @@ class MakersAirBnB < Sinatra::Base
     space = Space.create(user_id: session[:user].id, name: params[:name], description: params[:description],
       price: params[:price], from: Date.parse(params[:from]), to: Date.parse(params[:to]))
     Date.parse(params[:from]).step(Date.parse(params[:to])).each do |date|
-      Reservation.create(date: date, booked: false, space_id: space.id, request: false)
+      Reservation.create(date: date, booked: false, space_id: space.id)
     end
 
     redirect '/spaces'
   end
 
-  get '/spaces/:id' do
-    @space = Space.find_by(id: params[:id])
-    @reservations = Reservation.where(space_id: params[:id], booked: false)
+  post '/spaces/:id' do
     session[:space_id] = params[:id]
+    redirect "/dates"
+  end
+
+  get "/dates" do
+    @reservations = Reservation.where(space_id: session[:space_id], booked: false)
+
     erb :dates
   end
 
-  post '/reservations/:id' do
-    reservation = Reservation.find_by(id: params[:id])
-    reservation.update(request: true, user_id: session[:user].id)
+  post '/requests/:id' do
+    Request.create(reservation_id: params[:id], space_id: session[:space_id], user_id: session[:user].id)
 
     redirect '/requests'
   end
 
-  # post '/requests' do
-  #   Request.create(user_id: session[:user_id], space_id: session[:space_id], date: Date.parse(params[:date]))
-  #   session.delete([:space])
-  #
-  #   redirect '/requests'
-  # end
-
   get '/requests' do
-    @reservations_made = Reservation.where(user_id: session[:user].id, request: true)
-    @reservations_received = Reservation.where(request: true).select do |reservation|
-      reservation.space.user.id == session[:user].id
+    @requests_made = Request.where(user_id: session[:user].id)
+    @requests_received = Request.all.select do |request|
+      request.space.user.id == session[:user].id
     end
 
     erb :requests
   end
 
-  post '/requests/:id' do
-    reservation = Reservation.find_by(id: params[:id])
-    reservation.update(booked: true)
-
+  post '/approve/:id' do
+    request = Request.find_by(id: params[:id])
+    request.reservation.update(booked: true)
+    request.destroy
     redirect '/requests'
   end
 
-  post '/deny_requests/:id' do
-    reservation = Reservation.find_by(id: params[:id])
-    reservation.update(booked: false, request: false)
-
+  post '/deny/:id' do
+    request = Request.find_by(id: params[:id])
+    request.destroy
     redirect '/requests'
   end
 
