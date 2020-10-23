@@ -14,7 +14,8 @@
 <ul>
   <% @spaces.each do |space| %>
   <div class="space">
-  <form action="/spaces/<%=space.id%>" method="post">
+  <form action="/dates" method="get">
+    <input type="hidden" name = "space_id" value="<%=space.id%>">
     <input type="submit" value="book">
     <li>Name: <%= space.name %> </li>
     Description: <%= space.description %><br>

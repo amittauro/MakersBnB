@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
 
   def self.login(email:, password:)
     user = User.find_by_email(email)
-    user.password == password
+    return user if user.password == password
   end
 end
+
+# return user or nil for login

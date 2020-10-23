@@ -4,6 +4,7 @@ class CreateRequests < ActiveRecord::Migration[6.0]
       t.belongs_to :reservation
       t.belongs_to :space
       t.belongs_to :user
+      t.boolean :confirmed
     end
   end
 end

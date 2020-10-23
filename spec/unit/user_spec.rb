@@ -10,7 +10,7 @@ describe User do
   describe '.login' do
     it 'returns true if user can log in' do
       User.create(email: 'test@test.com', password: 'yes', password_confirmation: 'yes')
-      expect(User.login(email: 'test@test.com', password: 'yes')).to eq(true)
+      expect(User.login(email: 'test@test.com', password: 'yes')).to be_an_instance_of(User)
     end
   end
 end

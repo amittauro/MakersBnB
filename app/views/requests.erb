@@ -26,16 +26,14 @@
     <ul>
       <%@requests_received.each do |request|%>
       <div class="request">
-      <form action="/approve/<%=request.id%>" method="post">
-      <input type="submit" value="approve">
-      <li><%=request.space.name%></li>
+      <form action="/requests/<%=request.id%>" method="post">
+      <input type="hidden" name="_method" value="patch">
+      <input type="submit" name="status" value="deny">
+      <input type="submit" name="status" value="approve">
+      <li><%=request.user.email%></li>
+      <%=request.space.name%>
       <%=request.space.description%>
       <%=request.reservation.parsed_date%>
-      </form>
-      </div>
-      <div class="deny_request">
-      <form action="/deny/<%=request.id%>" method="post">
-      <input type="submit" value="deny">
       </form>
       </div>
       <% end %>

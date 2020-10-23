@@ -5,8 +5,6 @@ class CreateSpaces < ActiveRecord::Migration[6.0]
       t.string :name
       t.string :description
       t.string :price
-      t.date :from
-      t.date :to
     end
   end
 end

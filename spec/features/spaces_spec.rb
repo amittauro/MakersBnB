@@ -46,6 +46,7 @@ feature 'spaces' do
     click_button('log in')
     click_link('Requests')
     first('.request').click_button('approve')
+    p page.body
     click_button('log out')
     click_link('Log in')
     fill_in :email, with: 'guy@guy.com'
@@ -68,7 +69,7 @@ feature 'spaces' do
     fill_in :password, with: '123'
     click_button('log in')
     click_link('Requests')
-    first('.deny_request').click_button('deny')
+    first('.request').click_button('deny')
     click_button('log out')
     click_link('Log in')
     fill_in :email, with: 'guy@guy.com'
@@ -76,6 +77,25 @@ feature 'spaces' do
     click_button('log in')
     first('.space').click_button('book')
     expect(page).to have_content('01/12/2020')
+  end
+
+  scenario 'My request no longer exists when approved' do
+    sign_in
+    add_listing
+    click_button('log out')
+    sign_in_2
+    first('.space').click_button('book')
+    first('.date').click_button('book')
+    click_button('log out')
+    click_link('Log in')
+    fill_in :email, with: 'test@test.com'
+    fill_in :password, with: '123'
+    click_button('log in')
+    click_link('Requests')
+    first('.request').click_button('deny')
+    expect(page).to have_no_content('home')
+    expect(page).to have_no_content('nice')
+    p page.body
   end
 
 end

@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2020_10_22_213340) do
     t.bigint "reservation_id"
     t.bigint "space_id"
     t.bigint "user_id"
+    t.boolean "confirmed"
     t.index ["reservation_id"], name: "index_requests_on_reservation_id"
     t.index ["space_id"], name: "index_requests_on_space_id"
     t.index ["user_id"], name: "index_requests_on_user_id"
@@ -38,8 +39,6 @@ ActiveRecord::Schema.define(version: 2020_10_22_213340) do
     t.string "name"
     t.string "description"
     t.string "price"
-    t.date "from"
-    t.date "to"
     t.index ["user_id"], name: "index_spaces_on_user_id"
   end
 

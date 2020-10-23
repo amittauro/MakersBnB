@@ -35,16 +35,24 @@ class MakersAirBnB < Sinatra::Base
   end
 
   post '/sessions/new' do
-    if User.login(email: params[:email], password: params[:password])
-      session[:user] = User.find_by(email: params[:email])
+    user = User.login(email: params[:email], password: params[:password])
+        # if User.login(email: params[:email], password: params[:password])
+        # User.find_by(email: params[:email])
+    if user
+      session[:user_id] = user.id
+      #seesion[:user_id] = user.id
       redirect '/spaces'
+    else
+      redirect '/sessions/new'
     end
-
-    redirect '/sessions/new'
   end
 
+  # SESSION TO STORE SOMETHING SIMPLE
+  # method for current user
+  # session[:user_id] = User.find_by(email: params[:email]).id
+
   get '/spaces' do
-    @user = User.find_by(id: session[:user].id)
+    @user = User.find_by(id: session[:user_id])
     @spaces = Space.all
     erb :spaces
   end
@@ -58,52 +66,75 @@ class MakersAirBnB < Sinatra::Base
     erb :new_space
   end
 
+  #POST '/SPACES'
+
   post '/spaces/new' do
-    space = Space.create(user_id: session[:user].id, name: params[:name], description: params[:description],
-      price: params[:price], from: Date.parse(params[:from]), to: Date.parse(params[:to]))
-    Date.parse(params[:from]).step(Date.parse(params[:to])).each do |date|
-      Reservation.create(date: date, booked: false, space_id: space.id)
-    end
+    space = Space.create(
+      user_id: session[:user_id],
+      name: params[:name],
+      description: params[:description],
+      price: params[:price],
+      )
+
+      #instance method on a space (FIND ITS RESERVATIONS)
+
+    Reservation.create_range(from: params[:from], to: params[:to], space_id: space.id)
 
     redirect '/spaces'
   end
 
-  post '/spaces/:id' do
-    session[:space_id] = params[:id]
-    redirect "/dates"
-  end
+  # post '/spaces/:id' do
+  #   session[:space_id] = params[:id]
+  #   redirect "/dates"
+  # end
+
+  # get spaces/:id of space / dates
 
   get "/dates" do
-    @reservations = Reservation.where(space_id: session[:space_id], booked: false)
+    @reservations = Reservation.where(space_id: params[:space_id], booked: false)
 
     erb :dates
   end
 
+  #input type hidden value = space.id
+  # posting handing info over to the server that it doesnt have
+
+  # below it implies that you're doing something to a certain request which you're not
+  # do hidden id
+
   post '/requests/:id' do
-    Request.create(reservation_id: params[:id], space_id: session[:space_id], user_id: session[:user].id)
+    reservation = Reservation.find_by(id: params[:id])
+    Request.create(reservation_id: params[:id], space_id: reservation.space.id, user_id: session[:user_id])
 
     redirect '/requests'
   end
 
   get '/requests' do
-    @requests_made = Request.where(user_id: session[:user].id)
-    @requests_received = Request.all.select do |request|
-      request.space.user.id == session[:user].id
+    @requests_made = Request.where(user_id: session[:user_id])
+    @requests_received = Request.where(confirmed: nil).select do |request|
+      request.space.user.id == session[:user_id]
     end
+
+    # Self.all within the method.
+    # request approved or denied?
+    # user.spaces.requests
+    # pushed for time whats necessary?
 
     erb :requests
   end
 
-  post '/approve/:id' do
-    request = Request.find_by(id: params[:id])
-    request.reservation.update(booked: true)
-    request.destroy
-    redirect '/requests'
-  end
+  # user.spaces => spaces of the current user => each space.requests
 
-  post '/deny/:id' do
+  # user.spaces.each in view file
+
+
+  patch '/requests/:id' do
     request = Request.find_by(id: params[:id])
-    request.destroy
+    request.update(confirmed: true)
+    if params['status'] == 'approve'
+      request.reservation.update(booked: true)
+    end
+
     redirect '/requests'
   end
 
